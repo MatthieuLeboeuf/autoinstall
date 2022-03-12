@@ -24,4 +24,4 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: autoinstall
-        path: ${GOPATH}/bin/autoinstall
+        path: ${GOBIN}/autoinstall
