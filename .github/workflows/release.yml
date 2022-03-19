@@ -1,0 +1,75 @@
+name: Create Release
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+        check-latest: true
+
+    - name: Build
+      run: go build
+
+    - name: Create checksum and add to changelog
+      run: |
+        SUM=`sha256sum autoinstall`
+        echo -e "\n#### SHA256 Checksum\n\n\`\`\`\n$SUM\n\`\`\`\n" > ./RELEASE
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body_path: ./RELEASE
+          draft: true
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
+
+      - name: Upload binary
+        id: upload-release-archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: autoinstall
+          asset_name: autoinstall
+          asset_content_type: application/x-binary
+
+    - name: Create deb file
+      env:
+        REF: ${{ github.ref }}
+      run: |
+        mkdir -p autoinstall_${REF:11}-1_amd64/usr/bin autoinstall_${REF:11}-1_amd64/DEBIAN
+        mv autoinstall autoinstall_${REF:11}-1_amd64/usr/bin/autoinstall
+        echo "Package: autoinstall\nVersion: ${REF:11}\nMaintainer: MatthieuLeboeuf <contact@matthieul.dev>\nArchitecture: amd64\nHomepage: https://matthieul.dev\nDescription: autoinstall" > autoinstall_${REF:11}-1_amd64/DEBIAN/control
+        dpkg --build autoinstall_${REF:11}-1_amd64
+
+    - name: Upload deb file
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        source: "*.deb"
+        target: "/var/www/deb.matthieul.dev/pool/main"
+
+    - name: Update deb repository
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: bash /root/services/apt/update.sh
