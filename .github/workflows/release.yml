@@ -23,28 +23,28 @@ jobs:
         SUM=`sha256sum autoinstall`
         echo -e "\n#### SHA256 Checksum\n\n\`\`\`\n$SUM\n\`\`\`\n" > ./RELEASE
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body_path: ./RELEASE
-          draft: true
-          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body_path: ./RELEASE
+        draft: true
+        prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
 
-      - name: Upload binary
-        id: upload-release-archive
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: autoinstall
-          asset_name: autoinstall
-          asset_content_type: application/x-binary
+    - name: Upload binary
+      id: upload-release-archive
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: autoinstall
+        asset_name: autoinstall
+        asset_content_type: application/x-binary
 
     - name: Create deb file
       env:
