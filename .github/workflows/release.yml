@@ -52,7 +52,7 @@ jobs:
       run: |
         mkdir -p autoinstall_${REF:11}-1_amd64/usr/bin autoinstall_${REF:11}-1_amd64/DEBIAN
         mv autoinstall autoinstall_${REF:11}-1_amd64/usr/bin/autoinstall
-        echo "Package: autoinstall\nVersion: ${REF:11}\nMaintainer: MatthieuLeboeuf <contact@matthieul.dev>\nArchitecture: amd64\nHomepage: https://matthieul.dev\nDescription: autoinstall" > autoinstall_${REF:11}-1_amd64/DEBIAN/control
+        echo -e "Package: autoinstall\nVersion: ${REF:11}\nMaintainer: MatthieuLeboeuf <contact@matthieul.dev>\nArchitecture: amd64\nHomepage: https://matthieul.dev\nDescription: autoinstall" > autoinstall_${REF:11}-1_amd64/DEBIAN/control
         dpkg --build autoinstall_${REF:11}-1_amd64
 
     - name: Upload deb file
