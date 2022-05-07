@@ -18,7 +18,10 @@ func selectPhpVersion() string {
 			}
 		})
 	})
-	c.Visit("https://www.php.net/supported-versions")
+	err := c.Visit("https://www.php.net/supported-versions")
+	if err != nil {
+		utils.ShowMessage("Une erreur est survenue !", true)
+	}
 
 	prompt := promptui.Select{
 		Label:    "Quelle version voulez-vous",
@@ -35,6 +38,22 @@ func selectPhpVersion() string {
 func changeDefaultPhpVersion() bool {
 	prompt := promptui.Select{
 		Label:    "Voulez-vous mettre cette version par défaut",
+		Items:    []string{"Oui", "Non"},
+		HideHelp: true,
+	}
+	_, result, err := prompt.Run()
+	if err != nil {
+		utils.ShowMessage("Une erreur est survenue !", true)
+	}
+	if result == "Non" {
+		return false
+	}
+	return true
+}
+
+func installRecommendedPhpExtensions() bool {
+	prompt := promptui.Select{
+		Label:    "Voulez-vous installer les extensions php fréquemment installés",
 		Items:    []string{"Oui", "Non"},
 		HideHelp: true,
 	}
@@ -77,6 +96,10 @@ func PhpInstall() {
 
 	if changeDefaultPhpVersion() {
 		utils.ExecuteCommand("update-alternatives --set php /usr/bin/php" + version)
+	}
+
+	if installRecommendedPhpExtensions() {
+		utils.ExecuteCommand("apt-get install php" + version + "-{curl,mbstring,gd,xml,zip,intl,mysql} -y")
 	}
 
 	utils.GoodBye()
