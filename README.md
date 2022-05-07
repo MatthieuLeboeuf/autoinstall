@@ -7,7 +7,7 @@ App permettant de simplifier l'installation et la configuration d'un serveur lin
 
 ## Fonctionnalités
 
-- Installation de plusieurs paquets (nodejs, yarn, python, etc)
+- Installation de plusieurs paquets (nodejs, yarn, php, etc)
 - Installation de LAMP et LEMP
 - Installation de certificats ssl (Let's Encrypt, Cloudflare)
 

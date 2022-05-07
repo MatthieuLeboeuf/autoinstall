@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func selectVersion() string {
+func selectNodeVersion() string {
 	type version struct {
 		Start string `json:"start"`
 		End   string `json:"end"`
@@ -97,7 +97,7 @@ func NodeJsInstall() {
 		utils.ExecuteCommand("apt-get remove --purge nodejs -y")
 		utils.ExecuteCommand("rm " + gpgFile + " /etc/apt/sources.list.d/nodesource.list")
 	}
-	version := selectVersion()
+	version := selectNodeVersion()
 
 	// extra packages
 	var packages []string
@@ -118,8 +118,8 @@ func NodeJsInstall() {
 	}
 
 	utils.ExecuteCommand("curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee " + gpgFile + " >/dev/null")
-	utils.ExecuteCommand("echo 'deb [signed-by=" + gpgFile + "] https://deb.nodesource.com/node_" + version + ".x bullseye main' > /etc/apt/sources.list.d/nodesource.list")
-	utils.ExecuteCommand("echo 'deb-src [signed-by=" + gpgFile + "] https://deb.nodesource.com/node_" + version + ".x bullseye main' >> /etc/apt/sources.list.d/nodesource.list")
+	utils.ExecuteCommand("echo 'deb [signed-by=" + gpgFile + "] https://deb.nodesource.com/node_" + version + ".x " + utils.GetOsName() + " main' > /etc/apt/sources.list.d/nodesource.list")
+	utils.ExecuteCommand("echo 'deb-src [signed-by=" + gpgFile + "] https://deb.nodesource.com/node_" + version + ".x " + utils.GetOsName() + " main' >> /etc/apt/sources.list.d/nodesource.list")
 	utils.ExecuteCommand("apt-get update -y")
 	utils.ExecuteCommand("apt-get install nodejs -y")
 

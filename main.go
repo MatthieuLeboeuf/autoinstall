@@ -58,7 +58,7 @@ func CheckRequirements() {
 func SelectAction() {
 	prompt := promptui.Select{
 		Label:    "Sélectionner ce que vous voulez faire",
-		Items:    []string{"Installer NodeJs"},
+		Items:    []string{"Installer NodeJs", "Installer PHP"},
 		HideHelp: true,
 	}
 	_, result, err := prompt.Run()
@@ -68,5 +68,7 @@ func SelectAction() {
 	switch result {
 	case "Installer NodeJs":
 		actions.NodeJsInstall()
+	case "Installer PHP":
+		actions.PhpInstall()
 	}
 }
