@@ -58,7 +58,7 @@ func CheckRequirements() {
 func SelectAction() {
 	prompt := promptui.Select{
 		Label:    "Sélectionner ce que vous voulez faire",
-		Items:    []string{"Installer NodeJs", "Installer PHP"},
+		Items:    []string{"Installer NodeJs", "Installer PHP", "Installer MariaDB"},
 		HideHelp: true,
 	}
 	_, result, err := prompt.Run()
@@ -70,5 +70,7 @@ func SelectAction() {
 		actions.NodeJsInstall()
 	case "Installer PHP":
 		actions.PhpInstall()
+	case "Installer MariaDB":
+		actions.MariaDbInstall()
 	}
 }

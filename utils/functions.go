@@ -40,3 +40,12 @@ func GetOsName() string {
 	}
 	return strings.ReplaceAll(string(stdout), "\n", "")
 }
+
+func GetHostname() string {
+	command := exec.Command("hostname")
+	stdout, err := command.Output()
+	if err != nil {
+		ShowMessage("Erreur !", true)
+	}
+	return strings.ReplaceAll(string(stdout), "\n", "")
+}
